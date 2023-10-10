@@ -1,0 +1,168 @@
+#include <GL/glut.h>
+#include <math.h>
+
+//Bagas Adhitya-5222600001
+//Muhammad Ihmal-5222600013
+//10GTA
+
+void cylinder(float rbase, float rtop, float height);
+void pipe(float rbase, float rtop, float height, int resolusi);
+void blok(float tebal, int ratiol, int ratiop);
+
+double rotation_x = 0;
+double rotation_y = 0;
+double rotate_All = 0;
+int lastMouseX, lastMouseY;
+bool isDragging = false;
+
+GLfloat ambient_light[] = { 0.0, 0.0, 0.0, 0.0 };
+GLfloat source_light[] = { 1.0, 0.0, 1.0, 1.0 };
+GLfloat light_pos[] = { 100, 100.0, 0.0, 4.0 };
+
+void draw3D(void)
+{
+    glClearColor(0.0, 1.0, 0.0, 0.0);
+    glShadeModel(GL_SMOOTH);
+    glViewport(10, 100, 480, 480);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(58.0, (GLfloat)640 / (GLfloat)480, 1.0, 200.0);
+
+    glEnable(GL_DEPTH_TEST);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glEnable(GL_LIGHTING);
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambient_light);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, source_light);
+    glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
+    glEnable(GL_LIGHT0);
+    glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+}
+
+GLUquadricObj* quadObj;
+
+void display(void)
+{
+    quadObj = gluNewQuadric();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    glTranslatef(5.0, 10.0, -100);
+    glPushMatrix();
+    glRotatef(1.0, 1.0, 1.0, 1.0);
+    glRotatef(rotate_All, 1.0, 1.0, 1.0);
+
+    glRotatef(rotation_x, 1.0, 0.0, 0.0);
+    glRotatef(rotation_y, 0.0, 1.0, 0.0);
+
+    // Badan utama
+    glColor3f(1.0, 1.0, 1.0);
+    glDisable(GL_LIGHTING);
+    glTranslatef(0.0, 0.0, 0.0);
+    cylinder(3.0, 3.0, 60.0);
+    glEnable(GL_LIGHTING);
+
+    // Ujung atas
+    glColor3f(0.0, 0.0, 1.0);
+    glTranslatef(0.0, 0.0, -6.0);
+    cylinder(2.0, 2.0, 20.0);
+
+    // Ujung bawah
+    glColor3f(0.5, 0.5, 0.5);
+    glDisable(GL_LIGHTING);
+    glTranslatef(0.0, 0.0, 64.0);
+    cylinder(2.0, 2.0, 5.0);
+    glEnable(GL_LIGHTING);
+
+
+    // Ujung bawah 2
+    glColor3f(0.5, 0.5, 0.5);
+    glDisable(GL_LIGHTING);
+    glTranslatef(0.0, 0.0, 3.0);
+    cylinder(0.5, 0.3, 7.0);
+    glEnable(GL_LIGHTING);
+
+    // Ujung pena
+    glColor3f(0.0, 0.0, 0.0);
+    glTranslatef(0.0, 0.0, 6.0);
+    cylinder(0.1, 0.1, 5.0);
+
+    glPopMatrix();
+
+    glFlush();
+    glutSwapBuffers();
+}
+
+
+void pipe(float rbase, float rtop, float height, int resolusi)
+{
+    float i;
+    glPushMatrix();
+    glTranslatef(0.0, 0.0, -rbase / 4);
+    for (i = 0; i <= height; i += rbase / 8)
+    {
+        glTranslatef(0.0, 0.0, rbase / 8);
+        glutSolidTorus(rbase / 4, rbase - ((i * (rbase - rtop)) / height), 4, resolusi);
+    }
+    glTranslatef(0.0, 0.0, rbase / 4);
+    glPopMatrix();
+}
+
+void cylinder(float rbase, float rtop, float height)
+{
+    float i;
+    glPushMatrix();
+    glTranslatef(0, 0.0, -rbase / 4);
+    for (i = 0; i <= height; i += rbase / 8)
+    {
+        glTranslatef(0, 0.0, rbase / 8);
+        glutSolidTorus(3, rbase - ((i * (rbase - rtop)) / height), 20, 16);
+    }
+    glTranslatef(0, 0.0, rbase / 4);
+    glPopMatrix();
+}
+
+void mouse(int button, int state, int x, int y)
+{
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+    {
+        lastMouseX = x;
+        lastMouseY = y;
+        isDragging = true;
+    }
+    else if (button == GLUT_LEFT_BUTTON && state == GLUT_UP)
+    {
+        isDragging = false;
+    }
+}
+
+void mouseMotion(int x, int y)
+{
+    if (isDragging)
+    {
+        int deltaX = x - lastMouseX;
+        int deltaY = y - lastMouseY;
+        rotation_x += deltaY * 0.5;
+        rotation_y += deltaX * 0.5;
+        lastMouseX = x;
+        lastMouseY = y;
+        glutPostRedisplay();
+    }
+}
+
+int main(int argc, char** argv)
+{
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+    glutInitWindowSize(400, 400);
+    glutInitWindowPosition(0, 0);
+    glutCreateWindow("Ini Spidol");
+    glutDisplayFunc(display);
+    glutIdleFunc(display);
+    glutMouseFunc(mouse);
+    glutMotionFunc(mouseMotion);
+    draw3D();
+    glutMainLoop();
+    return 0;
+}
