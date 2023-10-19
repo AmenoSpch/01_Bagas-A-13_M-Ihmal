@@ -96,13 +96,11 @@ void cylinder(float rbase, float rtop, float height)
 {
     float i;
     glPushMatrix();
-    glTranslatef(0, 0.0, -rbase / 4);
     for (i = 0; i <= height; i += rbase / 8)
     {
         glTranslatef(0, 0.0, rbase / 8);
         glutSolidTorus(3, rbase - ((i * (rbase - rtop)) / height), 20, 16);
     }
-    glTranslatef(0, 0.0, rbase / 4);
     glPopMatrix();
 }
 
