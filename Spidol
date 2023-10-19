@@ -6,9 +6,6 @@
 //10GTA
 
 void cylinder(float rbase, float rtop, float height);
-void pipe(float rbase, float rtop, float height, int resolusi);
-void blok(float tebal, int ratiol, int ratiop);
-
 double rotation_x = 0;
 double rotation_y = 0;
 double rotate_All = 0;
@@ -39,11 +36,10 @@ void draw3D(void)
     glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 }
 
-GLUquadricObj* quadObj;
+
 
 void display(void)
 {
-    quadObj = gluNewQuadric();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -95,19 +91,6 @@ void display(void)
 }
 
 
-void pipe(float rbase, float rtop, float height, int resolusi)
-{
-    float i;
-    glPushMatrix();
-    glTranslatef(0.0, 0.0, -rbase / 4);
-    for (i = 0; i <= height; i += rbase / 8)
-    {
-        glTranslatef(0.0, 0.0, rbase / 8);
-        glutSolidTorus(rbase / 4, rbase - ((i * (rbase - rtop)) / height), 4, resolusi);
-    }
-    glTranslatef(0.0, 0.0, rbase / 4);
-    glPopMatrix();
-}
 
 void cylinder(float rbase, float rtop, float height)
 {
