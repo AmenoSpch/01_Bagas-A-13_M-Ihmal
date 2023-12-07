@@ -231,15 +231,8 @@ void mouseMotion(int x, int y)
     }
 }
 
-void printInteraction(void)
-{
-    std::cout << "Interaction:" << std::endl;
-    std::cout << "Press x, X, y, Y, z, Z to turn the torus." << std::endl;
-}
-
 int main(int argc, char** argv)
 {
-    printInteraction();
     glutInit(&argc, argv);
 
     glutInitContextVersion(4, 3);
